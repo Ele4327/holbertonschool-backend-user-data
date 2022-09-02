@@ -25,6 +25,7 @@ def filter_datum(fields: List[str], redaction: str, message: str,
     return message
 
 def get_logger() -> logging.Logger[Object]:
+    """ Return a logging.Logger object"""
     logger = logging.getLogger("user_data")
     logger.setLevel(logging.INFO)
     logger.propagate = False
