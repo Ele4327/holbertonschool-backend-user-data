@@ -4,10 +4,11 @@
     log message obfuscated
 """
 
-from typing import List
+from typing import List, Object
 import re
 import logging
 
+PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'password')
 
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
@@ -23,6 +24,17 @@ def filter_datum(fields: List[str], redaction: str, message: str,
                          message)
     return message
 
+def get_logger() -> logging.Logger[Object]:
+    logger = logging.getLogger("user_data")
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    logger.basicConfig(format=RedactingFormatter.FORMAT)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(RedactingFormatter(list(PII_FIELDS)))
+    logger.addHandler(stream_handler)
+
+    return logger
 
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
