@@ -13,6 +13,39 @@ from os import environ
 PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'password')
 
 
+def main():
+    """
+        Function that takes no arguments and returns nothing
+        The function will obtain a database connection using
+        get_db and retrieve all rows in the users table and
+        display each row under a filtered format
+
+        Filtered fields:
+        name
+        email
+        phone
+        ssn
+        password
+    """
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute('SELECT * FROM users;')
+    rows = cursor.fetchall()
+
+    logger = get_logger()
+    field_names = [i[0] for i in cursor.description]
+
+    for row in rows:
+        message = ''
+        for field in range(len(row)):
+            message += f'{field_names[field]}={row[field]};'
+        logger.info(message)
+
+    cursor.close()
+    db.close()
+
+
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
     """
@@ -74,3 +107,7 @@ class RedactingFormatter(logging.Formatter):
         record.msg = filter_datum(self.fields, self.REDACTION,
                                   record.getMessage(), self.SEPARATOR)
         return super(RedactingFormatter, self).format(record)
+
+
+if __name__ == "__main__":
+    main()
