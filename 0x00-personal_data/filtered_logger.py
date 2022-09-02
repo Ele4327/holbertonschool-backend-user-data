@@ -4,7 +4,7 @@
     log message obfuscated
 """
 
-from typing import List, Object
+from typing import List
 import re
 import logging
 
