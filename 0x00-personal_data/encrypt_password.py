@@ -16,7 +16,6 @@ def hash_password(password: str) -> bytes:
     return (bcrypt.hashpw(password.encode(), bcrypt.gensalt()))
 
 
-
 def is_valid(hashed_password: bytes, password: str) -> bool:
     """
         Implement an is_valid function that expects
