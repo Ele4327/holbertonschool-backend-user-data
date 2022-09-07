@@ -3,4 +3,8 @@
     Test
 """
 
+
 class BasicAuth(Auth):
+    """
+        Test
+    """
