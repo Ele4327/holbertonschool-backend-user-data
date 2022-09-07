@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-    Test
+Basic API authentication module
 """
 
 from api.v1.auth.auth import Auth
@@ -10,11 +10,11 @@ from typing import TypeVar
 
 
 class BasicAuth(Auth):
-    """Test"""
+    """ Basic Authentication """
 
     def extract_base64_authorization_header(self, authorization_header: str)\
             -> str:
-        """ Test """
+        """ Returns Base64 part of Authorization header """
 
         if authorization_header is None:
             return None
@@ -27,7 +27,7 @@ class BasicAuth(Auth):
 
     def decode_base64_authorization_header(
             self, base64_authorization_header: str) -> str:
-        """ Test """
+        """ Returns decoded value of Base64 str """
 
         if base64_authorization_header is None:
             return None
@@ -41,7 +41,7 @@ class BasicAuth(Auth):
 
     def extract_user_credentials(
             self, decoded_base64_authorization_header: str) -> (str, str):
-        """ Test """
+        """ Returns user email and pswd from decoded Base64 """
 
         if decoded_base64_authorization_header is None:
             return None, None
@@ -55,7 +55,7 @@ class BasicAuth(Auth):
 
     def user_object_from_credentials(
             self, user_email: str, user_pwd: str) -> TypeVar('User'):
-        """ Test """
+        """ Returns User instance based on email and pswd """
 
         if user_email is None or user_pwd is None:
             return None
@@ -72,3 +72,15 @@ class BasicAuth(Auth):
                 return user
             else:
                 return None
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """ Overrides Auth and retrieves User instance for request """
+
+        # Retrieve auth header from the request using Auth method
+        auth_header = self.authorization_header(request)
+
+        # Decode auth header value, get user data using Basic Auth methods
+        header_value = self.extract_base64_authorization_header(auth_header)
+        decoded_value = self.decode_base64_authorization_header(header_value)
+        user_data = self.extract_user_credentials(decoded_value)  # Returns 2
+        return self.user_object_from_credentials(user_data[0], user_data[1])
